@@ -1,48 +1,36 @@
 /*
  *
  *
-
-Quantumult X 单文件日志打印脚本 (log_all.js)
- 
- [rewrite_local]
-# >keep 课程预览 直播课。会员付费课跟练 会员训练计划
-^https?:\/\/.* script-response-body https://raw.githubusercontent.com/lee723/pic/refs/heads/master/log_all.js
-
+脚本功能：listenleap-帮你听懂英语播客-通过播客学英语
+软件版本：1.5.1
+下载地址：
+脚本作者：
+更新时间：2025
+电报频道：https://t.me/GieGie777
+问题反馈：
+使用声明：此脚本仅供学习与交流，请在下载使用24小时内删除！请勿在中国大陆转载与贩卖！
+*******************************
+[rewrite_local]
+# > 帮你听懂英语播客-通过播客学英语
+^https?://.+listenleap\.com/front-api/user/getUserInfoByUserToken url script-response-body https://raw.githubusercontent.com/WeiGiegie/666/main/listenleap.js
 
 [mitm]
-hostname = *
+hostname = www.listenleap.com,api.listenleap.com
 *
 *
 */
 
 
-// 1. 获取请求 URL
-const requestUrl = $request ? $request.url : "未知 URL";
 
-// 2. 获取响应状态码和响应体
-const statusCode = $response ? $response.statusCode : "无状态码";
-let responseBody = $response ? $response.body : "";
 
-// 3. 格式化日志输出
-console.log(`\n================== [QX Log Start] ==================`);
-console.log(`[URL]    : ${requestUrl}`);
-console.log(`[Status] : ${statusCode}`);
+var obj = JSON.parse($response.body);
 
-if (responseBody) {
-    try {
-        const jsonObj = JSON.parse(responseBody);
-        console.log(`[Body]   : \n${JSON.stringify(jsonObj, null, 2)}`);
-    } catch (e) {
-        const printBody = responseBody.length > 1000 
-            ? responseBody.substring(0, 1000) + "\n... (内容过长已截断)" 
-            : responseBody;
-        console.log(`[Body]   : \n${printBody}`);
-    }
-} else {
-    console.log(`[Body]   : (空响应体)`);
+if (obj.data && obj.data.user) {
+    obj.data.user.vip = true;
+    obj.data.user.vipType = "会员";      
+    obj.data.user.vipStartTime = "2020-01-01T00:00:00Z";
+    obj.data.user.vipExpireTime = "2099-12-31T23:59:59Z";
+    
 }
 
-console.log(`================== [QX Log End] ==================\n`);
-
-// 4. 恢复数据流
-$done({});
+$done({body: JSON.stringify(obj)});
