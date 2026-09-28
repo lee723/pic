@@ -21,33 +21,55 @@ hostname = *
 */
 
 
-// 1. 获取请求 URL
-const requestUrl = $request ? $request.url : "未知 URL";
+// 1. 获取响应头与内容
+const headers = $response ? $response.headers : {};
+// 兼容 Header 键名大小写 (Content-Type / content-type)
+const contentType = headers['Content-Type'] || headers['content-type'] || '';
+const responseBody = $response ? $response.body : '';
 
-// 2. 获取响应状态码和响应体
-const statusCode = $response ? $response.statusCode : "无状态码";
-let responseBody = $response ? $response.body : "";
+// 2. 判断是否需要打印
+let isJson = false;
+let jsonObj = null;
 
-// 3. 格式化日志输出
-console.log(`\n================== [QX Log Start] ==================`);
-console.log(`[URL]    : ${requestUrl}`);
-console.log(`[Status] : ${statusCode}`);
-
-if (responseBody) {
-    try {
-        const jsonObj = JSON.parse(responseBody);
-        console.log(`[Body]   : \n${JSON.stringify(jsonObj, null, 2)}`);
-    } catch (e) {
-        const printBody = responseBody.length > 1000 
-            ? responseBody.substring(0, 1000) + "\n... (内容过长已截断)" 
-            : responseBody;
-        console.log(`[Body]   : \n${printBody}`);
-    }
-} else {
-    console.log(`[Body]   : (空响应体)`);
+// 判断条件 A：Header 中明确标注了 application/json
+if (contentType.toLowerCase().includes('json')) {
+    isJson = true;
 }
 
-console.log(`================== [QX Log End] ==================\n`);
+// 判断条件 B：如果 Header 没有明确标注，但存在响应体，尝试解析是否为有效 JSON
+if (responseBody) {
+    try {
+        jsonObj = JSON.parse(responseBody);
+        isJson = true; // 解析成功，确认是 JSON
+    } catch (e) {
+        // 解析失败，说明不是 JSON 格式
+        if (!isJson) {
+            jsonObj = null;
+        }
+    }
+}
 
-// 4. 恢复数据流
+// 3. 如果是 JSON 请求，才打印日志
+if (isJson) {
+    const requestUrl = $request ? $request.url : "未知 URL";
+    const statusCode = $response ? $response.statusCode : "无状态码";
+
+    console.log(`\n================== [QX JSON Log Start] ==================`);
+    console.log(`[URL]    : ${requestUrl}`);
+    console.log(`[Status] : ${statusCode}`);
+    
+    if (jsonObj) {
+        // 如果前面已经解析成功，直接格式化打印
+        console.log(`[Body]   : \n${JSON.stringify(jsonObj, null, 2)}`);
+    } else if (responseBody) {
+        // 如果只是 Content-Type 标注了 json 但 JSON.parse 异常，退回打印原文本
+        console.log(`[Body]   : \n${responseBody}`);
+    } else {
+        console.log(`[Body]   : (空 JSON 响应)`);
+    }
+    
+    console.log(`================== [QX JSON Log End] ==================\n`);
+}
+
+// 4. 必须调用 $done() 恢复数据流（非 JSON 请求不打印，但也要放行）
 $done({});
