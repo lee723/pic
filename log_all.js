@@ -1,12 +1,20 @@
-/**
- * Quantumult X 单文件日志打印脚本 (log_all.js)
- * 
- * [rewrite_local]
- * ^https?:\/\/.* script-response-body https://raw.githubusercontent.com/lee723/pic/refs/heads/master/log_all.js
- * 
- * [mitm]
- * hostname = *
- */
+/*
+ *
+ *
+
+Quantumult X 单文件日志打印脚本 (log_all.js)
+ 
+ [rewrite_local]
+# >keep 课程预览 直播课。会员付费课跟练 会员训练计划
+^https?:\/\/.* script-response-body https://raw.githubusercontent.com/lee723/pic/refs/heads/master/log_all.js
+
+
+[mitm]
+hostname = *
+*
+*
+*/
+
 
 // 1. 获取请求 URL
 const requestUrl = $request ? $request.url : "未知 URL";
