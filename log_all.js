@@ -34,7 +34,10 @@ let jsonObj = null;
 // 判断条件 A：Header 中明确标注了 application/json
 if (contentType.toLowerCase().includes('json')) {
     isJson = true;
-} else if (responseBody) {// 判断条件 B：如果 Header 没有明确标注，但存在响应体，尝试解析是否为有效 JSON
+}
+
+// 判断条件 B：如果 Header 没有明确标注，但存在响应体，尝试解析是否为有效 JSON
+if (responseBody) {
     try {
         jsonObj = JSON.parse(responseBody);
         isJson = true; // 解析成功，确认是 JSON
