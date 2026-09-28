@@ -54,7 +54,7 @@ if (isJson) {
     const requestUrl = $request ? $request.url : "未知 URL";
     const statusCode = $response ? $response.statusCode : "无状态码";
 
-    console.log(`\n################## [QX JSON Log Start] ##################`);
+    console.log(`\n\n################## [QX JSON Log Start] ##################`);
     console.log(`[URL]    : ${requestUrl}`);
     console.log(`[Status] : ${statusCode}`);
     
@@ -63,7 +63,7 @@ if (isJson) {
         console.log(`[Body]   : \n${JSON.stringify(jsonObj, null, 2)}`);
     }
     
-    console.log(`================== [QX JSON Log End] ==================\n`);
+    console.log(`================== [QX JSON Log End] ==================\n\n`);
 }
 
 // 4. 必须调用 $done() 恢复数据流（非 JSON 请求不打印，但也要放行）
