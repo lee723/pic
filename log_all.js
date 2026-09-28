@@ -34,10 +34,7 @@ let jsonObj = null;
 // 判断条件 A：Header 中明确标注了 application/json
 if (contentType.toLowerCase().includes('json')) {
     isJson = true;
-}
-
-// 判断条件 B：如果 Header 没有明确标注，但存在响应体，尝试解析是否为有效 JSON
-if (responseBody) {
+} else if (responseBody) {// 判断条件 B：如果 Header 没有明确标注，但存在响应体，尝试解析是否为有效 JSON
     try {
         jsonObj = JSON.parse(responseBody);
         isJson = true; // 解析成功，确认是 JSON
@@ -61,11 +58,6 @@ if (isJson) {
     if (jsonObj) {
         // 如果前面已经解析成功，直接格式化打印
         console.log(`[Body]   : \n${JSON.stringify(jsonObj, null, 2)}`);
-    } else if (responseBody) {
-        // 如果只是 Content-Type 标注了 json 但 JSON.parse 异常，退回打印原文本
-        console.log(`[Body]   : \n${responseBody}`);
-    } else {
-        console.log(`[Body]   : (空 JSON 响应)`);
     }
     
     console.log(`================== [QX JSON Log End] ==================\n`);
