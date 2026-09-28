@@ -51,7 +51,7 @@ if (isJson) {
     const requestUrl = $request ? $request.url : "未知 URL";
     const statusCode = $response ? $response.statusCode : "无状态码";
 
-    console.log(`\n================== [QX JSON Log Start] ==================`);
+    console.log(`\n################## [QX JSON Log Start] ##################`);
     console.log(`[URL]    : ${requestUrl}`);
     console.log(`[Status] : ${statusCode}`);
     
