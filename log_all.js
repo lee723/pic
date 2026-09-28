@@ -21,16 +21,33 @@ hostname = *
 */
 
 
+// 1. 获取请求 URL
+const requestUrl = $request ? $request.url : "未知 URL";
 
+// 2. 获取响应状态码和响应体
+const statusCode = $response ? $response.statusCode : "无状态码";
+let responseBody = $response ? $response.body : "";
 
-var obj = JSON.parse($response.body);
+// 3. 格式化日志输出
+console.log(`\n================== [QX Log Start] ==================`);
+console.log(`[URL]    : ${requestUrl}`);
+console.log(`[Status] : ${statusCode}`);
 
-if (obj.data && obj.data.user) {
-    obj.data.user.vip = true;
-    obj.data.user.vipType = "会员";      
-    obj.data.user.vipStartTime = "2020-01-01T00:00:00Z";
-    obj.data.user.vipExpireTime = "2099-12-31T23:59:59Z";
-    
+if (responseBody) {
+    try {
+        const jsonObj = JSON.parse(responseBody);
+        console.log(`[Body]   : \n${JSON.stringify(jsonObj, null, 2)}`);
+    } catch (e) {
+        const printBody = responseBody.length > 1000 
+            ? responseBody.substring(0, 1000) + "\n... (内容过长已截断)" 
+            : responseBody;
+        console.log(`[Body]   : \n${printBody}`);
+    }
+} else {
+    console.log(`[Body]   : (空响应体)`);
 }
 
-$done({body: JSON.stringify(obj)});
+console.log(`================== [QX Log End] ==================\n`);
+
+// 4. 恢复数据流
+$done({});
